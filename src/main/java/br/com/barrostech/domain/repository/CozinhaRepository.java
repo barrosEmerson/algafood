@@ -3,12 +3,11 @@ package br.com.barrostech.domain.repository;
 import java.util.List;
 
 import br.com.barrostech.domain.entity.Cozinha;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface CozinhaRepository {
+@Repository
+public interface CozinhaRepository extends JpaRepository<Cozinha, Long> {
+	//List<Cozinha> listar();
 
-	
-	List<Cozinha> listar();
-	Cozinha buscarPorId(Long id);
-	Cozinha adicionar(Cozinha cozinha);
-	void delete(Long id);
 }

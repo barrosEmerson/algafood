@@ -3,12 +3,13 @@ package br.com.barrostech.domain.repository;
 import java.util.List;
 
 import br.com.barrostech.domain.entity.Estado;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface EstadoRepository {
+@Repository
+public interface EstadoRepository extends JpaRepository<Estado, Long> {
 	
-	List<Estado> listar();
-	Estado buscarPorId(Long id);
-	Estado adicionar(Estado estado);
-	void delete(Long id);
+	//List<Estado> listar();
+
 
 }

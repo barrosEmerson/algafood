@@ -1,6 +1,7 @@
 package br.com.barrostech.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class EstadoController {
 	
 	@GetMapping
 	public List<Estado> Listar(){
-		return estadoRepository.listar();
+		return estadoRepository.findAll();
 	}
 	
 	@PostMapping
@@ -43,25 +44,25 @@ public class EstadoController {
 		return estadoService.salvar(estado);
 	}
 
-	@PutMapping("/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Estado> busca(@PathVariable Long id){
-		Estado estadoId  = estadoRepository.buscarPorId(id);
+		Optional<Estado> estadoId  = estadoRepository.findById(id);
 		
-		if(estadoId != null) {
-			return ResponseEntity.ok(estadoId);
+		if(estadoId.isPresent()) {
+			return ResponseEntity.ok(estadoId.get());
 		}
 		
 		return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<Estado> atualizar(@PathVariable Long id, @RequestBody Estado estado){
-		Estado estadoAtual = estadoRepository.buscarPorId(id);
+		Optional<Estado> estadoAtual = estadoRepository.findById(id);
 		
-		if(estadoAtual != null) {
-			BeanUtils.copyProperties(estado, estadoAtual, "id");
-			estadoAtual = estadoService.salvar(estadoAtual);
-			return ResponseEntity.ok(estadoAtual);
+		if(estadoAtual.isPresent()) {
+			BeanUtils.copyProperties(estado, estadoAtual.get(), "id");
+			Estado estadoSalvo = estadoService.salvar(estadoAtual.get());
+			return ResponseEntity.ok(estadoSalvo);
 		}
 		return ResponseEntity.notFound().build();
 	}

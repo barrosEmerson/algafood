@@ -1,6 +1,7 @@
 package br.com.barrostech.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +34,15 @@ public class CidadeController {
 	
 	@GetMapping
 	public List<Cidade> listar(){
-		return cidadeRepository.listar();
+		return cidadeRepository.findAll();
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Cidade> buscar(@PathVariable Long id){
-		Cidade cidade = cidadeRepository.buscarPorId(id);
+		Optional<Cidade> cidade = cidadeRepository.findById(id);
 		
-		if (cidade != null) {
-			return ResponseEntity.ok(cidade);
+		if (cidade.isPresent()) {
+			return ResponseEntity.ok(cidade.get());
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -60,13 +61,13 @@ public class CidadeController {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> atualizar(@PathVariable Long id,@RequestBody Cidade cidade) {
-		Cidade cidadeAtual = cidadeRepository.buscarPorId(id);
+		Optional<Cidade> cidadeAtual = cidadeRepository.findById(id);
 		
-		if(cidadeAtual != null) {
+		if(cidadeAtual.isPresent()) {
 			try {
-				BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-				cidadeAtual = cidadeService.salvar(cidadeAtual);
-				return ResponseEntity.ok(cidadeAtual);
+				BeanUtils.copyProperties(cidade, cidadeAtual.get(), "id");
+				Cidade cidadeSalva = cidadeService.salvar(cidadeAtual.get());
+				return ResponseEntity.ok(cidadeSalva);
 				
 			} catch (EntidadeNaoEncontrada e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
